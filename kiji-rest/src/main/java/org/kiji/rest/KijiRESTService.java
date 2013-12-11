@@ -105,7 +105,9 @@ public class KijiRESTService extends Service<KijiRESTConfiguration> {
       final KijiURI instanceURI = KijiURI.newBuilder(clusterURI).withInstanceName(instance).build();
       // Check existence of instance by opening and closing.
       final Kiji kiji = Kiji.Factory.open(instanceURI);
+      LOG.info("Kiji instance opened: " + kiji.toString());
       kiji.release();
+      LOG.info("Kiji instance released: " + kiji.toString());
       instances.add(instanceURI);
       LOG.info("Adding instance {}", instanceURI.toOrderedString());
       environment.addHealthCheck(new InstanceHealthCheck(instanceURI));

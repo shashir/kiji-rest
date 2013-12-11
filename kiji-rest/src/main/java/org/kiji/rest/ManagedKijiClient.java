@@ -76,6 +76,7 @@ public class ManagedKijiClient implements KijiClient, Managed {
     for (KijiURI instance : mInstances) {
       final String instanceName = instance.getInstance();
       final Kiji kiji = Kiji.Factory.open(instance);
+      LOG.info("Kiji instance opened: " + kiji.toString());
       mKijiMap.put(instanceName, kiji);
 
       final LoadingCache<String, KijiTable> kijiTableCache = CacheBuilder.newBuilder()
@@ -135,7 +136,9 @@ public class ManagedKijiClient implements KijiClient, Managed {
       cache.invalidateAll();
     }
     for (Kiji kiji : mKijiMap.values()) {
+      LOG.info("Preparing to release Kiji instance: " + kiji.toString());
       ResourceUtils.releaseOrLog(kiji);
+      LOG.info("Kiji instance released: " + kiji.toString());
     }
   }
 
@@ -154,7 +157,8 @@ public class ManagedKijiClient implements KijiClient, Managed {
       throw new WebApplicationException(new IOException("Instance " + instance + " unavailable!"),
           Response.Status.FORBIDDEN);
     }
-
+    Kiji kiji = mKijiMap.get(instance);
+    LOG.info("Kiji instance accessed: " + kiji.toString());
     return mKijiMap.get(instance);
   }
 
